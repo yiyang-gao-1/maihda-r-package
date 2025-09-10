@@ -1,0 +1,16 @@
+Package: maihdaR
+Title: MAIHDA: Multilevel Analysis of Individual Heterogeneity and
+    Discriminatory Accuracy
+Version: 0.0.0.9000
+Authors@R: 
+    person("Yiyang", "Gao", , "you@example.com", role = c("aut", "cre"))
+Description: Tools for MAIHDA: fit models, compute VPC/PCV/MOR/AUC, and
+    plot intersectional strata.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3

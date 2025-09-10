@@ -40,7 +40,7 @@ devtools::install_github("yiyang-gao-1/maihda-r-package")
 ## Basic Usage
 
 ```r
-library(maihda)
+library(maihdaR)
 
 # Load example data (simulated health survey data)
 data("health_intersections")

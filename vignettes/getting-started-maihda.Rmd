@@ -1,0 +1,47 @@
+---
+title: "Getting Started with MAIHDA (maihdaR)"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting Started with MAIHDA (maihdaR)}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, message=FALSE, warning=FALSE}
+library(maihdaR)
+library(dplyr)
+```
+
+1. Simulate data
+```{r}
+df <- simulate_maihda_data(n = 3000, seed = 1)
+dplyr::count(df, ethnicity, gender, class)
+```
+
+2. Fit the standard MAIHDA sequence
+```{r}
+seq <- maihda_sequence(
+  response = "y",
+  data = df,
+  strata = c("ethnicity","gender","class"),
+  family = binomial(),
+  main_effects = c("ethnicity","gender","class"),
+  engine = "lme4"
+)
+seq$metrics
+```
+
+3. Stratum predictions and plot
+```{r}
+mA <- seq$models$A
+st <- predict_strata(mA, type = "response")
+head(st)
+plot_strata(st, response = TRUE)
+```
+
+4. Website (Optional)
+```{r}
+usethis::use_pkgdown()
+usethis::use_github_action("pkgdown")
+```
+

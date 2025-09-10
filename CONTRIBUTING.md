@@ -1,6 +1,4 @@
-```markdown
-
-# Contributing to maihda
+## Contributing to maihda
 
 First off, thank you for considering contributing to the `maihda` package! 🎉 
 

@@ -1,6 +1,6 @@
 ## Contributing to maihda
 
-First off, thank you for considering contributing to the `maihda` package! 🎉 
+First off, thank you for considering contributing to the `maihdaR` package! 🎉 
 
 This package aims to make MAIHDA methodology accessible to health equity researchers, and contributions from the community are essential to achieving this goal. Whether you're fixing a bug, adding a feature, improving documentation, or sharing examples, every contribution matters.
 
@@ -47,7 +47,7 @@ When reporting a bug, include:
 
 ```r
 # Load package
-library(maihda)
+library(maihdaR)
 
 # Minimal code that reproduces the issue
 data <- data.frame(

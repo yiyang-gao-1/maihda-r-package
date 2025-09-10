@@ -34,7 +34,7 @@ You can install the development version of `maihda` from [GitHub](https://github
 
 ```r
 # install.packages("devtools")
-devtools::install_github("YourUsername/maihda")
+devtools::install_github("yiyang-gao-1/maihda-r-package")
 ```
 
 ## Basic Usage

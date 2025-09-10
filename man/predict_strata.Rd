@@ -2,27 +2,36 @@
 % Please edit documentation in R/predict_strata.R
 \name{predict_strata}
 \alias{predict_strata}
-\title{Stratum-level random effects with approximate CIs}
+\title{Stratum-level predictions and (optional) additive vs. excess decomposition}
 \usage{
 predict_strata(
   object,
   level = 0.95,
   type = c("link", "response"),
-  include_fixed_intercept = TRUE
+  include_fixed_intercept = TRUE,
+  decompose = FALSE,
+  additive_model = NULL
 )
 }
 \arguments{
-\item{object}{A "maihda" object.}
+\item{object}{A "maihda" object (typically the Additive model B).}
 
 \item{level}{Confidence level for intervals (default 0.95).}
 
 \item{type}{"link" or "response" (response uses logistic transform for binomial).}
 
 \item{include_fixed_intercept}{Whether to add the fixed intercept to random effects (default TRUE).}
+
+\item{decompose}{If TRUE, also compute additive (fixed-only) and excess (random) parts per stratum.}
+
+\item{additive_model}{Optional "maihda" object used to compute the additive (fixed-only) part;
+if NULL, use \code{object} itself.}
 }
 \value{
-A tibble with stratum, estimate, se, lwr, upr and (if binomial+response) prob columns.
+A tibble with stratum-level estimates. When \code{decompose=TRUE}, includes
+eta_add, eta_excess, eta_total, and their response-scale counterparts (prob_add, prob_total).
+Intervals are provided for the random-excess and total (via RE uncertainty).
 }
 \description{
-Stratum-level random effects with approximate CIs
+Stratum-level predictions and (optional) additive vs. excess decomposition
 }

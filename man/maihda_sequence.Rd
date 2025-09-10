@@ -2,7 +2,7 @@
 % Please edit documentation in R/sequence.R
 \name{maihda_sequence}
 \alias{maihda_sequence}
-\title{Fit the standard MAIHDA sequence (Null → Additive → +Covariates)}
+\title{Fit the standard MAIHDA sequence (Null → Additive → + Covariates)}
 \usage{
 maihda_sequence(
   response,
@@ -11,30 +11,30 @@ maihda_sequence(
   family = stats::gaussian(),
   main_effects = NULL,
   covariates = NULL,
+  contexts = NULL,
   engine = c("lme4", "glmmTMB", "brms"),
   ...
 )
 }
 \arguments{
-\item{response}{Character scalar: name of outcome column (e.g., "y").}
+\item{response}{Outcome name.}
 
 \item{data}{Data frame.}
 
-\item{strata}{Character vector of variables to build intersectional strata.}
+\item{strata}{Intersection-defining variables.}
 
-\item{family}{Model family, e.g. stats::binomial() or stats::gaussian().}
+\item{family}{stats::binomial() / stats::gaussian() / ...}
 
-\item{main_effects}{Character vector of fixed main-effects (e.g., c("ethnicity","gender","class")).}
+\item{main_effects}{Character vector for additive fixed main effects.}
 
-\item{covariates}{Optional character vector of additional covariates/exposures.}
+\item{covariates}{Optional additional covariates.}
+
+\item{contexts}{Optional cross-classified grouping(s), e.g. "region".}
 
 \item{engine}{"lme4","glmmTMB","brms".}
 
-\item{...}{Passed to underlying engine.}
-}
-\value{
-A list with elements: models (list), metrics (tibble).
+\item{...}{Passed to engine.}
 }
 \description{
-Fit the standard MAIHDA sequence (Null → Additive → +Covariates)
+Fit the standard MAIHDA sequence (Null → Additive → + Covariates)
 }

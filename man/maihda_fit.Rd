@@ -2,7 +2,7 @@
 % Please edit documentation in R/maihda_fit.R
 \name{maihda_fit}
 \alias{maihda_fit}
-\title{Fit a MAIHDA model (random intercept for intersectional strata)}
+\title{Fit a MAIHDA model (random intercept for intersectional strata, optional cross-context)}
 \usage{
 maihda_fit(
   formula,
@@ -10,25 +10,26 @@ maihda_fit(
   strata,
   family = stats::gaussian(),
   engine = c("lme4", "glmmTMB", "brms"),
+  contexts = NULL,
   ...
 )
 }
 \arguments{
-\item{formula}{Model formula without the random stratum term (e.g. y ~ 1 or y ~ x1 + x2).}
+\item{formula}{Model formula without random terms (e.g. y ~ 1 or y ~ x1 + x2).}
 
 \item{data}{A data.frame.}
 
-\item{strata}{Character vector of variables to build the intersectional strata.}
+\item{strata}{Character vector that defines the intersectional stratum.}
 
-\item{family}{A model family, default stats::gaussian().}
+\item{family}{stats::gaussian() or stats::binomial(), etc.}
 
-\item{engine}{One of "lme4","glmmTMB","brms".}
+\item{engine}{"lme4","glmmTMB","brms".}
+
+\item{contexts}{Optional character vector of additional grouping factors for cross-classified structures,
+e.g. c("region") or c("school","area"). Each will get a random intercept \code{(1|context)}.}
 
 \item{...}{Passed to the underlying model function.}
 }
-\value{
-An object of class "maihda".
-}
 \description{
-Fit a MAIHDA model (random intercept for intersectional strata)
+Fit a MAIHDA model (random intercept for intersectional strata, optional cross-context)
 }

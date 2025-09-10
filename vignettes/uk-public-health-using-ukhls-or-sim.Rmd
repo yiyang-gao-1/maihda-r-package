@@ -1,0 +1,49 @@
+---
+title: "UK Public Health MAIHDA: Understanding Society (or simulated)"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{UK Public Health MAIHDA: Understanding Society (or simulated)}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, message=FALSE, warning=FALSE}
+library(maihdaR)
+library(dplyr)
+```
+
+## Overview
+
+This vignette shows a UK public health example using MAIHDA:
+
+- Intersectional strata: ethnicity × sex × income quintile
+- Context (cross-classified): Government Office Region (GOR)
+- Outcome: mental distress caseness (GHQ-12-like binary)
+
+```{r}
+set.seed(123)
+df <- simulate_uk_public_health(n = 8000)
+
+# standard sequence with region as cross-context
+res <- maihda_sequence(
+  response = "y",
+  data = df,
+  strata = c("ethnicity","sex","income_q"),
+  family = binomial(),
+  main_effects = c("ethnicity","sex","income_q"),
+  contexts = "region",
+  engine = "lme4"
+)
+
+res$metrics
+dec <- decompose_strata(res$models$B, type = "response")
+head(dec)
+plot_strata_decomp(dec, scale = "response", order_by = "total", top_n = 40)
+```
+
+## Interpretation tips
+
+- **VPC**: between-stratum discriminatory accuracy.
+- **PCV**: reduction in between-stratum variance from Null → Additive (how much is "explained" additively).
+- **MOR (logistic)**: cluster variance on OR scale.
+- **Decomposition**: on link scale, total = additive + excess; on probability scale, excess = total - additive

@@ -26,45 +26,44 @@ maihda_metrics <- function(object, null = NULL) {
   tib
 }
 
-#' Fit the standard MAIHDA sequence (Null → Additive → +Covariates)
-#'
-#' @param response Character scalar: name of outcome column (e.g., "y").
+#' Fit the standard MAIHDA sequence (Null → Additive → + Covariates)
+#' @param response Outcome name.
 #' @param data Data frame.
-#' @param strata Character vector of variables to build intersectional strata.
-#' @param family Model family, e.g. stats::binomial() or stats::gaussian().
-#' @param main_effects Character vector of fixed main-effects (e.g., c("ethnicity","gender","class")).
-#' @param covariates Optional character vector of additional covariates/exposures.
+#' @param strata Intersection-defining variables.
+#' @param family stats::binomial() / stats::gaussian() / ...
+#' @param main_effects Character vector for additive fixed main effects.
+#' @param covariates Optional additional covariates.
+#' @param contexts Optional cross-classified grouping(s), e.g. "region".
 #' @param engine "lme4","glmmTMB","brms".
-#' @param ... Passed to underlying engine.
-#' @return A list with elements: models (list), metrics (tibble).
+#' @param ... Passed to engine.
 #' @export
 maihda_sequence <- function(response, data, strata,
                             family = stats::gaussian(),
                             main_effects = NULL,
                             covariates = NULL,
-                            engine = c("lme4","glmmTMB","brms"), ...) {
+                            contexts = NULL,
+                            engine = c("lme4","glmmTMB","brms"),
+                            ...) {
   engine <- match.arg(engine)
   stopifnot(is.character(response), length(response) == 1L, response %in% names(data))
   
-  # Build fixed-part formulas
   fixed_A <- "1"
   fixed_B <- if (length(main_effects)) paste(main_effects, collapse = " + ") else NULL
-  fixed_C <- if (length(covariates))  paste(c(collapse = " + ", covariates), collapse = " + ") else NULL
+  fixed_C <- if (length(covariates))  paste(covariates,  collapse = " + ") else NULL
   
   fA <- stats::as.formula(paste(response, "~", fixed_A))
-  mA <- maihda_fit(fA, data, strata = strata, family = family, engine = engine, ...)
-  
+  mA <- maihda_fit(fA, data, strata = strata, family = family, engine = engine, contexts = contexts, ...)
   models <- list(A = mA)
   tab    <- maihda_metrics(mA); tab$model <- "A: Null"
   
   if (!is.null(fixed_B)) {
     fB <- stats::as.formula(paste(response, "~", fixed_B))
-    mB <- maihda_fit(fB, data, strata = strata, family = family, engine = engine, ...)
+    mB <- maihda_fit(fB, data, strata = strata, family = family, engine = engine, contexts = contexts, ...)
     mb <- maihda_metrics(mB, null = mA); mb$model <- "B: Additive main effects"
     models$B <- mB; tab <- dplyr::bind_rows(tab, mb)
     if (!is.null(fixed_C)) {
       fC <- stats::as.formula(paste(response, "~", paste(c(fixed_B, fixed_C), collapse = " + ")))
-      mC <- maihda_fit(fC, data, strata = strata, family = family, engine = engine, ...)
+      mC <- maihda_fit(fC, data, strata = strata, family = family, engine = engine, contexts = contexts, ...)
       mc <- maihda_metrics(mC, null = mA); mc$model <- "C: Additive + covariates"
       models$C <- mC; tab <- dplyr::bind_rows(tab, mc)
     }
@@ -72,7 +71,6 @@ maihda_sequence <- function(response, data, strata,
   
   structure(list(models = models, metrics = tab), class = "maihda_sequence")
 }
-
 #' @export
 print.maihda_sequence <- function(x, ...) {
   cat("# MAIHDA sequence\n\n")

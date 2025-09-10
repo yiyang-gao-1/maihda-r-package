@@ -1,0 +1,61 @@
+---
+title: "UK-like MAIHDA Example (Schools/LA, Ethnicity × Gender × FSM)"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{UK-like MAIHDA Example (Schools/LA, Ethnicity × Gender × FSM)}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, message=FALSE, warning=FALSE}
+library(maihdaR)
+library(dplyr)
+set.seed(101)
+```
+
+1. Simulate a UK-like dataset
+
+We simulate pupils nested in local authorities (LA), with intersectional strata
+ethnicity × gender × FSM (free school meals). Outcome is a binary indicator (e.g., meeting a benchmark).
+
+```{r}
+# Identity variables
+eth_levels <- c("White British","Indian","Pakistani","Bangladeshi",
+                "Black African","Black Caribbean","Chinese","Other White","Mixed")
+gender_levels <- c("F","M")
+fsm_levels <- c("Non-FSM","FSM")
+
+N  <- 12000
+nLA <- 12
+la <- paste0("LA_", seq_len(nLA))
+
+df <- tibble(
+  ethnicity = sample(eth_levels, N, TRUE,
+                     prob = c(0.70,0.03,0.05,0.02,0.04,0.03,0.01,0.07,0.05)),
+  gender    = sample(gender_levels, N, TRUE, prob = c(0.49,0.51)),
+  fsm       = sample(fsm_levels, N, TRUE, prob = c(0.7,0.3)),
+  la        = sample(la, N, TRUE)
+)
+
+# Build strata & random effects: stratum (intersection) + LA context
+df <- intersection_strata(df, c("ethnicity","gender","fsm"), name = ".stratum")
+
+J  <- nlevels(df$.stratum)
+u_stratum <- rnorm(J, 0, 0.55)           # between-stratum SD ~0.55 (MAIHDA)
+u_la      <- rnorm(nLA, 0, 0.35)         # LA-level SD ~0.35
+names(u_la) <- la
+
+# Fixed-part tendencies (additive main effects; arbitrary but plausible)
+eth_fx <- setNames(c(0.00, 0.20, -0.15, -0.25, -0.10, -0.12, 0.10, -0.05, -0.02), eth_levels)
+sex_fx <- setNames(c(0.05, 0.00), gender_levels)  # F slightly higher
+fsm_fx <- setNames(c(0.00, -0.40), fsm_levels)    # FSM disadvantage
+
+eta <- -0.8 +
+  eth_fx[df$ethnicity] + sex_fx[df$gender] + fsm_fx[df$fsm] +
+  u_stratum[as.integer(df$.stratum)] + u_la[df$la]
+
+p <- 1/(1 + exp(-eta))
+df$y <- rbinom(N, 1, p)
+
+dplyr::glimpse(df)
+```

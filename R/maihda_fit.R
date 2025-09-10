@@ -1,20 +1,34 @@
-#' Fit a MAIHDA model (random intercept for intersectional strata)
+#' Fit a MAIHDA model (random intercept for intersectional strata, optional cross-context)
 #'
-#' @param formula Model formula without the random stratum term (e.g. y ~ 1 or y ~ x1 + x2).
+#' @param formula Model formula without random terms (e.g. y ~ 1 or y ~ x1 + x2).
 #' @param data A data.frame.
-#' @param strata Character vector of variables to build the intersectional strata.
-#' @param family A model family, default stats::gaussian().
-#' @param engine One of "lme4","glmmTMB","brms".
+#' @param strata Character vector that defines the intersectional stratum.
+#' @param family stats::gaussian() or stats::binomial(), etc.
+#' @param engine "lme4","glmmTMB","brms".
+#' @param contexts Optional character vector of additional grouping factors for cross-classified structures,
+#'   e.g. c("region") or c("school","area"). Each will get a random intercept `(1|context)`.
 #' @param ... Passed to the underlying model function.
-#' @return An object of class "maihda".
 #' @export
-maihda_fit <- function(formula, data, strata, family = stats::gaussian(),
-                       engine = c("lme4","glmmTMB","brms"), ...) {
+maihda_fit <- function(formula, data, strata,
+                       family = stats::gaussian(),
+                       engine = c("lme4","glmmTMB","brms"),
+                       contexts = NULL,
+                       ...) {
   engine <- match.arg(engine)
   data <- intersection_strata(data, strata, name = ".stratum")
   
-  rand <- stats::reformulate("(1|.stratum)")
-  full_formula <- stats::update(formula, paste(". ~ . +", as.character(rand)[2]))
+  # sanity checks
+  if (length(contexts)) {
+    stopifnot(all(contexts %in% names(data)))
+  }
+  
+  # build random part string
+  rand_terms <- c("(1|.stratum)")
+  if (length(contexts)) rand_terms <- c(rand_terms, sprintf("(1|%s)", contexts))
+  rand_string <- paste(rand_terms, collapse = " + ")
+  
+  # full formula
+  full_formula <- stats::as.formula(paste(deparse(formula), "+", rand_string))
   
   fit <- switch(engine,
                 lme4 = {
@@ -23,12 +37,8 @@ maihda_fit <- function(formula, data, strata, family = stats::gaussian(),
                   else
                     lme4::glmer(full_formula, data = data, family = family, ...)
                 },
-                glmmTMB = {
-                  glmmTMB::glmmTMB(full_formula, data = data, family = family, ...)
-                },
-                brms = {
-                  brms::brm(full_formula, data = data, family = family, ...)
-                }
+                glmmTMB = glmmTMB::glmmTMB(full_formula, data = data, family = family, ...),
+                brms    = brms::brm(full_formula, data = data, family = family, ...)
   )
   
   structure(list(
@@ -37,6 +47,7 @@ maihda_fit <- function(formula, data, strata, family = stats::gaussian(),
     data = data,
     strata = ".stratum",
     formula = full_formula,
+    contexts = contexts,
     call = match.call()
   ), class = "maihda")
 }

@@ -416,7 +416,7 @@ devtools::check()  # Must pass with no errors/warnings
 
 4. **Pull request template**:
 
-```markdown
+```
 ## Description
 Brief description of what this PR does.
 
@@ -439,12 +439,11 @@ Fixes #(issue number)
 - [ ] New and existing unit tests pass locally
 - [ ] I have updated NEWS.md
 
-## Examples
-```r
-# Show how to use your new feature
+
+# Examples to show how to use your new feature
 example_code_here()
 ```
-```
+
 
 5. **Respond to review feedback**:
    - Be patient and respectful

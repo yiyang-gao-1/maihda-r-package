@@ -191,4 +191,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 **Package Status**: This package is under active development. Features and interfaces may change. We encourage you to try it out and provide feedback!
-```

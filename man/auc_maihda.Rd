@@ -9,6 +9,9 @@ auc_maihda(object)
 \arguments{
 \item{object}{A "maihda" object fit with binomial family.}
 }
+\value{
+Numeric AUC.
+}
 \description{
 AUC for logistic MAIHDA (requires pROC)
 }

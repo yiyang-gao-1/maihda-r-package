@@ -8,6 +8,6 @@
 intersection_strata <- function(data, vars, name = ".stratum", drop = TRUE) {
   stopifnot(is.data.frame(data), length(vars) >= 1L, all(vars %in% names(data)))
   f <- interaction(data[vars], drop = drop, sep = "_", lex.order = TRUE)
-  data[[name]] <- stats::droplevels(factor(f))
+  data[[name]] <- base::droplevels(factor(f))  # update
   data
 }

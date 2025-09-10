@@ -6,6 +6,12 @@
 \usage{
 mor(object)
 }
+\arguments{
+\item{object}{A "maihda" object.}
+}
+\value{
+Numeric MOR.
+}
 \description{
 Median Odds Ratio (MOR) for logistic MAIHDA
 }

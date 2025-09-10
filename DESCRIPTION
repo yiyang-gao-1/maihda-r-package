@@ -3,7 +3,7 @@ Title: MAIHDA: Multilevel Analysis of Individual Heterogeneity and
     Discriminatory Accuracy
 Version: 0.0.0.9000
 Authors@R: 
-    person("Yiyang", "Gao", , "you@example.com", role = c("aut", "cre"))
+    person("Yiyang", "Gao", , "y.gao@sheffield.ac.uk", role = c("aut", "cre"))
 Description: Tools for MAIHDA: fit models, compute VPC/PCV/MOR/AUC, and
     plot intersectional strata.
 License: MIT + file LICENSE

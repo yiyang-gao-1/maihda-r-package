@@ -38,7 +38,6 @@ Install the development version of **`maihdaR`** from GitHub:
 # install.packages("devtools")
 devtools::install_github(
   "yiyang-gao-1/maihda-r-package",
-  subdir = "maihdaR",
   dependencies = TRUE,
   build_vignettes = TRUE
 )
